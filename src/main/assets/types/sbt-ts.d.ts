@@ -7,7 +7,7 @@ declare namespace sbtts {
     sourceRoot: string;
     baseUrl: string;
     rootDir: string;
-    configFile: string;
+    configFiles: string[];
     projectBase: string;
   }
 

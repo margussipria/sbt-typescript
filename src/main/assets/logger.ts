@@ -13,31 +13,46 @@ namespace sbtts {
     }
 
     info(message: string) {
-      if (this.logLevel === 'debug' || this.logLevel === 'info') {
-        console.log(message);
+      switch(this.logLevel) {
+        case 'debug':
+        case 'info':
+          console.log(message);
+          break;
+        default:
       }
     }
 
     warn(message: string) {
-      if (this.logLevel === 'debug' || this.logLevel === 'info' || this.logLevel === 'warn') {
-        console.log(message);
+      switch(this.logLevel) {
+        case 'debug':
+        case 'info':
+        case 'warn':
+          console.log(message);
+          break;
+        default:
+
       }
     }
 
     error(message: string, error: any) {
-      if (this.logLevel === 'debug' || this.logLevel === 'info' || this.logLevel === 'warn' || this.logLevel === 'error') {
-        if (error !== undefined) {
-          var errorMessage = error.message;
-          if (error.fileName !== undefined) {
-            errorMessage = `${errorMessage} in ${error.fileName}`;
+      switch(this.logLevel) { // so, in every level for now...
+        case 'debug':
+        case 'info':
+        case 'warn':
+        case 'error':
+          if (error !== undefined) {
+            let errorMessage = error.message;
+            if (error.fileName !== undefined) {
+              errorMessage = `${errorMessage} in ${error.fileName}`;
+            }
+            if (error.lineNumber !== undefined) {
+              errorMessage = `$errorMessage at line ${error.lineNumber}`;
+            }
+            console.log(`${message} ${errorMessage}`);
+          } else {
+            console.log(message);
           }
-          if (error.lineNumber !== undefined) {
-            errorMessage = `$errorMessage at line ${error.lineNumber}`;
-          }
-          console.log(`${message} ${errorMessage}`);
-        } else {
-          console.log(message);
-        }
+          break;
       }
     }
   }

@@ -1,12 +1,14 @@
 import java.nio.file.Files
 
-import com.arpnetworking.sbt.typescript.Import.TypescriptKeys._
+import com.typesafe.sbt.typescript.Import.TypescriptKeys._
 import sbt.complete.DefaultParsers._
 
-lazy val root = (project in file(".")).enablePlugins(SbtWeb).settings(
-  JsEngineKeys.engineType := JsEngineKeys.EngineType.Node,
-  sourceRoot  := "/assets/"
-)
+lazy val root = (project in file("."))
+  .enablePlugins(SbtWeb)
+  .settings(
+    JsEngineKeys.engineType := JsEngineKeys.EngineType.Node,
+    sourceRoot  := "/assets/"
+  )
 
 includeFilter in (Assets, typescript) := GlobFilter("*.ts") | GlobFilter("*.tsx") | GlobFilter("*.js") | GlobFilter("*.jsx")
 

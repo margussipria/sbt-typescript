@@ -1,15 +1,17 @@
 import java.io.File
 import java.nio.file.Files
+
 import play.api.libs.json._
 import sbt.complete.DefaultParsers._
 
-lazy val root = (project in file(".")).enablePlugins(SbtWeb)
+lazy val root = (project in file("."))
+  .enablePlugins(SbtWeb)
 
 lazy val checkSourceEquals = inputKey[Unit]("Validates source map source. First arg: source map path. Second arg: source file path.")
 
 checkSourceEquals := {
   val args: Seq[String] = spaceDelimited("<arg>").parsed
-  val actual = readSourceMapSource(new File(args(0)))
+  val actual = readSourceMapSource(new File(args.head))
   val expected = args(1)
   assert(actual == expected, s"Invalid map source.\n Expected '$expected'.\n Actual: '$actual'.")
 }

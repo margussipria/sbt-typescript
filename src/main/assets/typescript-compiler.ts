@@ -17,32 +17,37 @@ namespace sbtts {
       this.logger.debug(`args = ${JSON.stringify(args)}`);
     }
 
-    private getTSConfig(options: sbtts.Options): ts.ParsedCommandLine {
-      let configFilePath = this.path.join(options.projectBase, options.configFile);
-      let configJson = JSON.parse(this.fs.readFileSync(configFilePath, 'utf-8'));
-      let configDir = this.path.dirname(configFilePath);
-      let configFileName = this.path.basename(configFilePath);
+    private getTSConfig(options: sbtts.Options): ts.ParsedCommandLine[] {
 
-      return this.typescript.parseJsonConfigFileContent(
-        configJson, this.typescript.sys, configDir, {}, configFileName
-      );
+      return options.configFiles.map(function (configFile: String) {
+        let configFilePath = this.path.join(options.projectBase, configFile);
+        let configJson = JSON.parse(this.fs.readFileSync(configFilePath, 'utf-8'));
+        let configDir = this.path.dirname(configFilePath);
+        let configFileName = this.path.basename(configFilePath);
+
+        return this.typescript.parseJsonConfigFileContent(
+          configJson, this.typescript.sys, configDir, {}, configFileName
+        );
+      }, this);
     }
 
-    private createCompilerOptions(args: sbtweb.Arguments<sbtts.Options>): ts.CompilerOptions {
-      this.logger.debug('creating compiler settings');
-      let config = this.getTSConfig(args.options);
-      let compSettings = config.options;
+    private createCompilerOptions(args: sbtweb.Arguments<sbtts.Options>): ts.CompilerOptions[] {
 
-      compSettings.rootDir = args.options.rootDir;
-      compSettings.baseUrl = args.options.baseUrl;
-      compSettings.outDir = args.target;
-      compSettings.sourceRoot = args.options.sourceRoot;
+      return this.getTSConfig(args.options).map(function(config: ts.ParsedCommandLine) {
+        this.logger.debug('creating compiler settings for config');
+        let compSettings = config.options;
 
-      return compSettings;
+        compSettings.rootDir = args.options.rootDir;
+        compSettings.baseUrl = args.options.baseUrl;
+        compSettings.outDir = args.target;
+        compSettings.sourceRoot = args.options.sourceRoot;
+
+        return compSettings;
+      }, this);
     }
 
     private replaceFileExtension(fileName: string, ext: string): string {
-      var oldExt = this.path.extname(fileName);
+      const oldExt = this.path.extname(fileName);
 
       return fileName.substring(0, fileName.length - oldExt.length) + ext;
     }
@@ -58,7 +63,7 @@ namespace sbtts {
       this.fs.writeFileSync(fileName, JSON.stringify(sourceMap), 'utf-8');
     }
 
-    private prepareMessageText(diagnostic: ts.Diagnostic): string {
+    private static prepareMessageText(diagnostic: ts.Diagnostic): string {
       // Sometimes the messageText is more than a string
       // In this case, we need to walk the "next" objects and build
       // the proper message text
@@ -94,7 +99,7 @@ namespace sbtts {
       return {
         lineNumber: lineCol.line + 1,
         characterOffset: lineCol.character,
-        message: this.prepareMessageText(diagnostic),
+        message: sbtts.TypescriptCompiler.prepareMessageText(diagnostic),
         source: fileName,
         severity: this.problemSeverities[diagnostic.category],
         lineContent: lineText
@@ -123,7 +128,7 @@ namespace sbtts {
       return filesWritten;
     }
 
-    private findDependencies(sourceFile: ts.SourceFile): string[] {
+    private static findDependencies(sourceFile: ts.SourceFile): string[] {
       let depFiles = sourceFile.referencedFiles;
       let deps = [sourceFile.fileName];
 
@@ -151,7 +156,7 @@ namespace sbtts {
         return {
           source: sourceFile.fileName,
           result: {
-            filesRead: this.findDependencies(sourceFile),
+            filesRead: sbtts.TypescriptCompiler.findDependencies(sourceFile),
             filesWritten: filesWritten
           }
         };
@@ -164,7 +169,7 @@ namespace sbtts {
       return fileName.replace(base, '');
     }
 
-    private getProgramDiagnostics(program: ts.Program, emitOutput: ts.EmitOutput): ts.Diagnostic[] {
+    protected static getProgramDiagnostics(program: ts.Program, emitOutput: ts.EmitOutput): ts.Diagnostic[] {
       let diagnostics = program.getSyntacticDiagnostics();
       if (diagnostics.length === 0) {
         diagnostics = program.getGlobalDiagnostics();
@@ -198,24 +203,32 @@ namespace sbtts {
     }
 
     public compile(args: sbtweb.Arguments<sbtts.Options>): sbtweb.CompilerOutput {
-      let compilerOptions = this.createCompilerOptions(args);
-      this.logger.debug(`compilerOptions = ${JSON.stringify(compilerOptions)}`);
+      return this.createCompilerOptions(args)
+        .map(function (compilerOptions) {
+          this.logger.debug(`compilerOptions = ${JSON.stringify(compilerOptions)}`);
 
-      let compiler = this.createCompiler(args.options.sources, compilerOptions);
-      let emitOutput = compiler.emit();
+          let compiler = this.createCompiler(args.options.sources, compilerOptions);
+          let emitOutput = compiler.emit();
 
-      let diagnostics = this.getProgramDiagnostics(compiler, emitOutput);
+          let diagnostics = TypescriptCompiler.getProgramDiagnostics(compiler, emitOutput);
 
-      let inputFiles = args.sourceFileMappings.map((pair) => pair[0]);
-      let inputOutputFilesMap = this.buildInputOutputFilesMap(inputFiles, compilerOptions);
+          let inputFiles = args.sourceFileMappings.map((pair) => pair[0]);
+          let inputOutputFilesMap = this.buildInputOutputFilesMap(inputFiles, compilerOptions);
 
-      let sourceFiles: ts.SourceFile[] = compiler.getSourceFiles()
-        .filter((sourceFile: ts.SourceFile) => !!inputOutputFilesMap[sourceFile.fileName]);
+          let sourceFiles: ts.SourceFile[] = compiler.getSourceFiles()
+            .filter((sourceFile: ts.SourceFile) => !!inputOutputFilesMap[sourceFile.fileName]);
 
-      return {
-        results: this.getResults(sourceFiles, compilerOptions, inputOutputFilesMap),
-        problems: diagnostics.map((diagnostic) => this.createProblem(diagnostic))
-      };
+          return {
+            results: this.getResults(sourceFiles, compilerOptions, inputOutputFilesMap),
+            problems: diagnostics.map((diagnostic) => this.createProblem(diagnostic))
+          };
+        }, this)
+        .reduce(function (accumulator, currentValue) {
+          return {
+            results: accumulator.results.concat(currentValue.results),
+            problems: accumulator.problems.concat(currentValue.problems)
+          };
+        });
     }
   }
 }

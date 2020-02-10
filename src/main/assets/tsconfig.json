@@ -9,6 +9,6 @@
     "removeComments": true,
     "noImplicitAny": true,
     "noImplicitReturns": true,
-    "outFile": "target/sbt-typescript/typescriptc.js"
+    "outFile": "../../../target/web/typescript/main/typescriptc.js"
   }
 }
