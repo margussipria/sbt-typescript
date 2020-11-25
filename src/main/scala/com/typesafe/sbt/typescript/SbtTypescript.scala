@@ -43,21 +43,21 @@ object SbtTypescript extends AutoPlugin {
 
   val typescriptUnscopedSettings = Seq(
 
-    includeFilter in (Assets, typescript) := GlobFilter("*.ts") | GlobFilter("*.tsx"),
+    includeFilter := GlobFilter("*.ts") | GlobFilter("*.tsx"),
 
-    excludeFilter in (Assets, typescript) := GlobFilter("*.d.ts"),
+    excludeFilter := GlobFilter("*.d.ts"),
 
-    sources in (Assets, typescript) := ((sourceDirectory in Assets).value ** ((includeFilter in (Assets, typescript)).value -- (excludeFilter in (Assets, typescript)).value)).get,
+    sources := (sourceDirectory.value ** (includeFilter.value -- excludeFilter.value)).get,
 
     jsOptions := JsObject(
       "sourceRoot" -> JsString(sourceRoot.value),
       "logLevel" -> JsString(logLevel.value.toString),
-      "rootDir" -> JsString((sourceDirectory in Assets).value.absolutePath),
-      "baseUrl" -> JsString(((webJarsDirectory in Assets).value / "lib").absolutePath),
+      "rootDir" -> JsString(sourceDirectory.value.absolutePath),
+      "baseUrl" -> JsString((webJarsDirectory.value / "lib").absolutePath),
       "configFiles" -> JsArray(configFiles.value.map(file => JsString(file)).toVector),
       "projectBase" -> JsString(baseDirectory.value.absolutePath),
       "sources" -> JsArray(
-        (sources in (Assets, typescript)).value
+        sources.value
           .filter(_.isFile)
           .map(file => JsString(file.absolutePath))
           .toVector
@@ -79,9 +79,10 @@ object SbtTypescript extends AutoPlugin {
       JsEngineKeys.parallelism := 1,
       sourceRoot := "",
       logLevel := Level.Info,
-      configFiles := Vector(
+      configFiles in Assets := Vector(
         relative(baseDirectory.value.absolutePath, ((sourceDirectory in Assets).value / "tsconfig.json").absolutePath)
-      )
+      ),
+      configFiles in TestAssets := Vector.empty
     ) ++ inTask(typescript)(
       SbtJsTask.jsTaskSpecificUnscopedProjectSettings ++
         inConfig(Assets)(typescriptUnscopedSettings) ++

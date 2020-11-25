@@ -1,6 +1,7 @@
 define("javascripts/util/string", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    exports.upperCase = void 0;
     function upperCase(str) {
         return str.toUpperCase();
     }
@@ -9,6 +10,7 @@ define("javascripts/util/string", ["require", "exports"], function (require, exp
 define("javascripts/util/logger", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    exports.log = void 0;
     function log(str) {
         console.log(str);
     }

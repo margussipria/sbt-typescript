@@ -5,7 +5,7 @@ homepage := Some(new URL("https://github.com/margussipria/sbt-typescript"))
 licenses := Seq(("Apache 2", new URL("http://www.apache.org/licenses/LICENSE-2.0.txt")))
 organization := "eu.sipria.sbt"
 
-scalaVersion := "2.12.10"
+scalaVersion := "2.12.12"
 
 developers := List(
   // Developer("barp", "Brandon Arp", "brandon@arpnetworking.com", url("http://www.arpnetworking.com")),
@@ -25,7 +25,7 @@ lazy val root = (project in file("."))
     addSbtPlugin("com.typesafe.sbt" % "sbt-js-engine" % "1.2.3"),
 
     libraryDependencies ++= Seq(
-      "org.webjars.npm" % "typescript" % "3.7.5",
+      "org.webjars.npm" % "typescript" % "3.9.7",
       "com.typesafe" % "jstranspiler" % "1.0.1"
     )
   )
