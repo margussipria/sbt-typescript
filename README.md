@@ -1,7 +1,7 @@
 sbt-typescript
 ==============
 
-<a href="https://raw.githubusercontent.com/ArpNetworking/sbt-typescript/master/LICENSE">
+<a href="https://raw.githubusercontent.com/margussipria/sbt-typescript/master/LICENSE">
     <img src="https://img.shields.io/hexpm/l/plug.svg"
          alt="License: Apache 2">
 </a>
@@ -9,8 +9,8 @@ sbt-typescript
     <img src="https://travis-ci.org/margussipria/sbt-typescript.png"
          alt="Travis Build">
 </a>
-<a href="http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.arpnetworking%22%20a%3A%22sbt-typescript%22">
-    <img src="https://img.shields.io/maven-central/v/com.arpnetworking/sbt-typescript.svg"
+<a href="http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22eu.sipria.sbt%22%20a%3A%22sbt-typescript%22">
+    <img src="https://img.shields.io/maven-central/v/eu.sipria.sbt/sbt-typescript.svg"
          alt="Maven Artifact">
 </a>
 
@@ -20,7 +20,7 @@ typescript compiler.
 To use this plugin use the addSbtPlugin command within your project's plugins.sbt (or as a global setting) i.e.:
 
 ```scala
-addSbtPlugin("com.arpnetworking" % "sbt-typescript" % "0.3.4")
+addSbtPlugin("eu.sipria.sbt" % "sbt-typescript" % "0.6.0")
 resolvers += Resolver.typesafeRepo("releases")
 ```
 
