@@ -11,5 +11,9 @@
     "noImplicitReturns": true,
     "outFile": "app.js",
     "allowJs": true
-  }
+  },
+  "files": [
+    "util/string.ts",
+    "main.ts"
+  ]
 }
