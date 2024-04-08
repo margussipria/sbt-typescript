@@ -76,24 +76,25 @@ object SbtTypescript extends AutoPlugin {
 
   override def projectSettings: Seq[Def.Setting[_]] = {
     Seq(
-      JsEngineKeys.parallelism := 1,
+      JsEngineKeys.engineType := JsEngineKeys.EngineType.Node,
+
       sourceRoot := "",
       logLevel := Level.Info,
-      configFiles in Assets := Vector(
-        relative(baseDirectory.value.absolutePath, ((sourceDirectory in Assets).value / "tsconfig.json").absolutePath)
+      Assets / configFiles := Vector(
+        relative(baseDirectory.value.absolutePath, ((Assets / sourceDirectory).value / "tsconfig.json").absolutePath)
       ),
-      configFiles in TestAssets := Vector.empty
+      TestAssets / configFiles := Vector.empty,
     ) ++ inTask(typescript)(
       SbtJsTask.jsTaskSpecificUnscopedProjectSettings ++
         inConfig(Assets)(typescriptUnscopedSettings) ++
         inConfig(TestAssets)(typescriptUnscopedSettings) ++
         Seq(
-          taskMessage in Assets := "TypeScript compiling",
-          taskMessage in TestAssets := "TypeScript test compiling"
+          Assets / taskMessage := "TypeScript compiling",
+          TestAssets / taskMessage := "TypeScript test compiling"
         )
     ) ++ SbtJsTask.addJsSourceFileTasks(typescript) ++ Seq(
-      typescript in Assets := (typescript in Assets).dependsOn(webModules in Assets).value,
-      typescript in TestAssets := (typescript in TestAssets).dependsOn(webModules in TestAssets).value
+      Assets / typescript := (Assets / typescript).dependsOn(Assets / webModules).value,
+      TestAssets / typescript := (TestAssets / typescript).dependsOn(TestAssets / webModules).value,
     )
   }
 }

@@ -25,7 +25,7 @@ lazy val root = (project in file("."))
     addSbtPlugin("com.typesafe.sbt" % "sbt-js-engine" % "1.2.3"),
 
     libraryDependencies ++= Seq(
-      "org.webjars.npm" % "typescript" % "3.9.7",
+      "org.webjars.npm" % "typescript" % "5.4.2",
       "com.typesafe" % "jstranspiler" % "1.0.1"
     )
   )
@@ -40,8 +40,8 @@ scalacOptions += "-feature"
 publishMavenStyle := true
 
 // TODO: like why is there META-INF/resources/webjars/sbt-typescript/0.5.1-SNAPSHOT/ containing all the assets after this?
-scriptedDependencies := scriptedDependencies.dependsOn(TypescriptKeys.typescript in Assets).value
-publish := publish.dependsOn(TypescriptKeys.typescript in Assets).value
-publishLocal := publishLocal.dependsOn(TypescriptKeys.typescript in Assets).value
-//compile in Compile := (compile in Compile).dependsOn(TypescriptKeys.typescript in Assets).value
-resourceDirectory in Compile := baseDirectory.value / "target" / "web" / "typescript" / "main" // // :(
+scriptedDependencies := scriptedDependencies.dependsOn(Assets / TypescriptKeys.typescript).value
+publish := publish.dependsOn(Assets / TypescriptKeys.typescript).value
+publishLocal := publishLocal.dependsOn(Assets / TypescriptKeys.typescript).value
+//compile in Compile := (Compile / compile).dependsOn(TypescriptKeys.typescript in Assets).value
+Compile / resourceDirectory := baseDirectory.value / "target" / "web" / "typescript" / "main" // // :(

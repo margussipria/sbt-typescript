@@ -43,13 +43,13 @@ include and exclude, baseUrl properties of tsconfig are not supported.
 For including specific files of your project you can write something like:
 
 ```scala
-includeFilter in (Assets, typescript) := GlobFilter("myFile.ts")
+Assets / typescript / includeFilter := GlobFilter("myFile.ts")
 ```
 
 You can also set an exclude filter in the same way:
 
 ```scala
-excludeFilter in (Assets,typescript) := GlobFilter("*.d.ts") | GlobFilter("*.spec.ts") | GlobFilter("**/typings")
+Assets / typescript / excludeFilter := GlobFilter("*.d.ts") | GlobFilter("*.spec.ts") | GlobFilter("**/typings")
 ```
 
 A note on typescript compiling speed
