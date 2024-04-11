@@ -5,7 +5,7 @@ homepage := Some(new URL("https://github.com/margussipria/sbt-typescript"))
 licenses := Seq(("Apache 2", new URL("http://www.apache.org/licenses/LICENSE-2.0.txt")))
 organization := "eu.sipria.sbt"
 
-scalaVersion := "2.12.12"
+scalaVersion := "2.12.13"
 
 developers := List(
   // Developer("barp", "Brandon Arp", "brandon@arpnetworking.com", url("http://www.arpnetworking.com")),
