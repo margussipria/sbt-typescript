@@ -12,7 +12,7 @@ lazy val root = (project in file("."))
     sourceRoot  := "/assets/"
   )
 
-includeFilter in (Assets, typescript) := GlobFilter("*.ts") | GlobFilter("*.tsx") | GlobFilter("*.js") | GlobFilter("*.jsx")
+Assets / typescript / includeFilter := GlobFilter("*.ts") | GlobFilter("*.tsx") | GlobFilter("*.js") | GlobFilter("*.jsx")
 
 lazy val assertMatches = inputKey[Unit]("")
 

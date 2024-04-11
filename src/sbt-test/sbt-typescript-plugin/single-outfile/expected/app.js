@@ -20,6 +20,6 @@ define("javascripts/main", ["require", "exports", "javascripts/util/string", "ja
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     // Legacy is a "global" object which typescript will complain about without the typings file
-    logger_1.log(Legacy.someFunc(string_1.upperCase("Hello World")));
+    (0, logger_1.log)(Legacy.someFunc((0, string_1.upperCase)("Hello World")));
 });
 //# sourceMappingURL=app.js.map
