@@ -30,6 +30,8 @@ lazy val root = (project in file("."))
     )
   )
 
+javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint")
+
 resolvers ++= Seq(
   Resolver.mavenLocal,
   Resolver.typesafeRepo("releases")
